@@ -1,0 +1,51 @@
+services:
+  storage:
+    image: redis
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: qwerty
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: qwerty
+      ME_CONFIG_MONGODB_URL: mongodb://root:qwerty@mongo:27017/
+
+  counter:
+    image: node:19.8
+    working_dir: /app
+    volumes:
+      - /media/sf_1.3/counter:/app
+    environment:
+      - PORT=3001
+      - REDIS_URL=redis://storage
+    ports:
+      - 3001:3001
+    command: npm run dev
+    depends_on:
+      - storage
+
+  api:
+    image: node:19.8
+    working_dir: /app
+    volumes:
+      - /media/sf_1.3/api:/app
+    environment:
+      - PORT=3000
+      - COUNTER_URL=http://counter:3001
+      - URL_MONGO=mongodb://root:qwerty@mongo:27017/
+    ports:
+      - 80:3000
+    command: npm run dev
+    depends_on:
+      - mongo

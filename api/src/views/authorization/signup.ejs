@@ -1,0 +1,15 @@
+<%- include('../port/layout-start', {title: title}) %>
+
+<h1><%= title %></h1>
+
+<form method="post" action="/api/user/signup">
+    <div class="form-group">
+        <input class="form-control" placeholder="Логин" type="text" id="username" name="username" required>
+    </div>
+    <div class="form-group">
+        <input class="form-control" сlass="mt5" placeholder="Пароль" type="password" id="password" name="password" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+</form>
+
+<%- include('../port/layout-end') %>
